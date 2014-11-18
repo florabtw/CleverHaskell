@@ -11,4 +11,5 @@ executable CleverHaskell
   ghc-options:         -Wall
   main-is:             Main.hs
   hs-source-dirs:      src
-  build-depends:       base ==4.6.*
+  build-depends:       base ==4.6.*,
+                       http-conduit

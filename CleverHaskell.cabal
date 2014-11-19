@@ -12,4 +12,6 @@ executable CleverHaskell
   main-is:             Main.hs
   hs-source-dirs:      src
   build-depends:       base ==4.6.*,
-                       http-conduit
+                       http-conduit,
+                       aeson,
+                       bytestring

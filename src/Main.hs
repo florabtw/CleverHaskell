@@ -15,14 +15,14 @@ data AllData = AllData { getData :: [SectionData] }
 data SectionData = SectionData { getSection :: Section }
                                deriving (Show)
 
-data Section = Section { getId :: String }
+data Section = Section { getStudents :: [String] }
                        deriving (Show)
 
 -- List of things that are dumb:
 --              1. This
 instance FromJSON Section where
     parseJSON (Object v) =
-        Section <$> v .: "id"
+        Section <$> v .: "students"
     parseJSON _ = mzero
 
 instance FromJSON AllData where
@@ -44,9 +44,6 @@ server = "https://api.clever.com/v1.1"
 sections :: String
 sections = server ++ "/sections"
 
-studentsInSection :: String -> String
-studentsInSection x = sections ++ "/" ++ x ++ "/students"
-
 requestSections :: IO B.ByteString
 requestSections = do
     request <- parseUrl sections
@@ -60,5 +57,5 @@ parseSections sectionJson = do
     decoded <- decode sectionJson
     return $ getData decoded
 
-getSectionIds :: [SectionData] -> [String]
-getSectionIds sectionData = map (getId . getSection) sectionData
+getSectionStudents :: [SectionData] -> [[String]]
+getSectionStudents sectionData = map (getStudents . getSection) sectionData

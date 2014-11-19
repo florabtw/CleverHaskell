@@ -36,18 +36,26 @@ instance FromJSON SectionData where
     parseJSON _ = mzero
 -- /dumb list
 
-main = undefined
+main = do
+    response <- requestSections
+    let sections = case parseSections response of
+                       (Just x) -> x
+                       Nothing -> error "Unable to parse response"
+    let studentsInSections = getSectionStudents sections
+        numSections        = length studentsInSections
+        numStudents        = length $ concat studentsInSections
+    print $ (fromIntegral numStudents) / (fromIntegral numSections)
 
 server :: String
 server = "https://api.clever.com/v1.1"
 
-sections :: String
-sections = server ++ "/sections"
+sectionsUrl :: String
+sectionsUrl = server ++ "/sections"
 
 requestSections :: IO B.ByteString
 requestSections = do
-    request <- parseUrl sections
-    let headers = [(fromString "Authorization", fromString "Bearer DEMO_TOKEN")]
+    request <- parseUrl sectionsUrl
+    let headers  = [(fromString "Authorization", fromString "Bearer DEMO_TOKEN")]
         request' = request { requestHeaders = headers }
     res <- withManager $ httpLbs request'
     return $ responseBody res
